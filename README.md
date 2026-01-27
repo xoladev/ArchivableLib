@@ -40,4 +40,4 @@ _G.ALib:MakeBlurEffect("game.Players.LocalPlayer.PlayerGui.Test.Frame")
 _G.ALib:MakeDraggable("game.Players.LocalPlayer.PlayerGui.Test.Frame")
 
 -- [7] Полная очистка и удаление библиотеки
--- _G.ALib:DestroyLib()
+_G.ALib:DestroyLib()
