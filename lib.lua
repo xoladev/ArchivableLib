@@ -1,5 +1,6 @@
 -- Services
 local UIService = game:GetService("UserInputService")
+local MarketplaceService = game:GetService("MarketplaceService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
@@ -17,6 +18,7 @@ local TIService = game:GetService("TouchInputService")
 local GuiService = game:GetService("GuiService")
 local KeyboardService = game:GetService("KeyboardService")
 local MouseService = game:GetService("MouseService")
+local PlayersService = game:GetService("Players")
 
 -- Locals
 local ArchivableLib = {
@@ -33,10 +35,39 @@ local ArchivableLib = {
 			path = RSService,
 		},
 	},
-	Settings = {},
+	Themes = {
+		DarkTheme = {
+			Bg = Color3.fromRGB(30, 30, 30),
+			Text = Color3.fromRGB(217, 217, 217),
+			Accent = Color3.fromRGB(38, 38, 38),
+			Close = Color3.fromRGB(182, 182, 182),
+			PlaceHoldersColor = Color3.new(0.462745, 0.462745, 0.462745),
+		},
+		WhiteTheme = {
+			Bg = Color3.fromRGB(255, 255, 255),
+			Text = Color3.fromRGB(27, 27, 27),
+			Accent = Color3.fromRGB(240, 240, 240),
+			Close = Color3.fromRGB(31, 31, 31),
+			PlaceHoldersColor = Color3.new(0.462745, 0.462745, 0.462745),
+		},
+		RedTheme = {
+			Bg = Color3.fromRGB(122, 0, 0),
+			Text = Color3.fromRGB(255, 255, 255),
+			Accent = Color3.fromRGB(255, 67, 67),
+			Close = Color3.fromRGB(255, 80, 80),
+			PlaceHoldersColor = Color3.new(0.462745, 0.462745, 0.462745),
+		}
+	},
+	MenuThemes = {},
 }
 
-_G.ALib = ArchivableLib
+local ArchivableLibGlobal = {
+	Assets = {
+		imagePlaceholder = ArchivableLib.Assets.imagePlaceholder,
+		lolImage = ArchivableLib.Assets.lolImage,
+	},
+}
+_G.ALib = ArchivableLibGlobal
 
 --Core
 local function generateRandomString(length: number): string
@@ -52,7 +83,7 @@ local function generateRandomString(length: number): string
 
 	return table.concat(result)
 end
-local generatedRandomStrinng = generateRandomString(30)
+local generatedRandomString = generateRandomString(30)
 
 local function printPointer(text: string, level: number)
 	if level == 1 then
@@ -75,14 +106,14 @@ DepthOfFieldForBlur.InFocusRadius = 50
 DepthOfFieldForBlur.NearIntensity = 1
 
 local ArchivableGUI = Instance.new("ScreenGui")
-ArchivableGUI.Name = ArchivableLib.Assets.Root.name .. "_" .. generatedRandomStrinng
+ArchivableGUI.Name = ArchivableLib.Assets.Root.name .. "_" .. generatedRandomString
 ArchivableGUI.Parent = LocalPlayer:WaitForChild("PlayerGui")
 ArchivableGUI.ResetOnSpawn = false
 ArchivableGUI.Enabled = true
 ArchivableGUI.IgnoreGuiInset = true
-ArchivableLib.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-ArchivableLib.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
-ArchivableLib.AutoLocalize = false
+ArchivableGUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ArchivableGUI.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+ArchivableGUI.AutoLocalize = false
 
 local GUI_NotificationsHost = Instance.new("Frame")
 GUI_NotificationsHost.Name = "NotificationsHost"
@@ -94,6 +125,7 @@ GUI_NotificationsHost.BackgroundTransparency = 1
 GUI_NotificationsHost.Size = UDim2.new(0.19503, 0, 0.98352, 0)
 GUI_NotificationsHost.Position = UDim2.new(0.80497, 0, 0.00954, 0)
 GUI_NotificationsHost.BorderColor3 = Color3.fromRGB(0, 0, 0)
+GUI_NotificationsHost.ZIndex = 10
 
 local GUI_NotificationsHost_UIListLayout = Instance.new("UIListLayout")
 GUI_NotificationsHost_UIListLayout.Parent = GUI_NotificationsHost
@@ -113,17 +145,17 @@ if not ArchivableLib.Assets.Files.path:FindFirstChild(ArchivableLib.Assets.Root.
 end
 
 local ArchivableFilesTemp = Instance.new("Folder")
-ArchivableFilesTemp.Name = "session_" .. generatedRandomStrinng
+ArchivableFilesTemp.Name = "session_" .. generatedRandomString
 ArchivableFilesTemp.Parent = ArchivableFiles
 
 -- Functions
-function ArchivableLib:DestroyLib()
+function ArchivableLibGlobal:DestroyLib()
 	ArchivableGUI:Destroy()
 	ArchivableFilesTemp:Destroy()
 	script:Destroy()
 end
 
-function ArchivableLib:MakeBlurEffect(FramePath: string)
+function ArchivableLibGlobal:MakeBlurEffect(FramePath)
 	local newScript = Instance.new("LocalScript")
 	newScript.Name = "BlurEffect"
 
@@ -312,7 +344,7 @@ function ArchivableLib:MakeBlurEffect(FramePath: string)
 	return newScript
 end
 
-function ArchivableLib:MakeDraggable(FramePath: string)
+function ArchivableLibGlobal:MakeDraggable(FramePath: string)
 	local newScript = Instance.new("LocalScript")
 	newScript.Name = "DraggableEffect"
 
@@ -379,7 +411,7 @@ function ArchivableLib:MakeDraggable(FramePath: string)
 	return newScript
 end
 
-function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: string)
+function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: string)
 	local Notification = Instance.new("Frame")
 	Notification.Name = "Notification"
 	Notification.Parent = GUI_NotificationsHost
@@ -387,6 +419,7 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	Notification.BorderSizePixel = 0
 	Notification.Size = UDim2.new(0.9158, 0, 0.08818, 0)
 	Notification.Visible = false
+	GUI_NotificationsHost.ZIndex = 11
 
 	local Container = Instance.new("Frame")
 	Container.Name = "Container"
@@ -397,6 +430,7 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	Container.Size = UDim2.new(1, 0,0.997, 0)
 	Container.Position = UDim2.new(1.5, 0, 0, 0)
 	Container.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	GUI_NotificationsHost.ZIndex = 12
 
 	local NotificationCorner = Instance.new("UICorner")
 	NotificationCorner.Parent = Container
@@ -417,6 +451,7 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	Title.Position = UDim2.new(0.27907, 0, 0.08, 0)
 	Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Title.Text = TitleContent
+	GUI_NotificationsHost.ZIndex = 13
 
 	local Icon = Instance.new("ImageLabel")
 	Icon.Name = "Icon"
@@ -429,6 +464,7 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	Icon.Size = UDim2.new(0.24709, 0, 0.84, 0)
 	Icon.Position = UDim2.new(0.01744, 0, 0.08, 0)
 	Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	GUI_NotificationsHost.ZIndex = 13
 
 	local IconCorner = Instance.new("UICorner")
 	IconCorner.Parent = Icon
@@ -452,8 +488,9 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	Message.Position = UDim2.new(0.27907, 0, 0.43, 0)
 	Message.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Message.Text = MessageContent
+	GUI_NotificationsHost.ZIndex = 13
 
-	ArchivableLib:MakeBlurEffect(Container)
+	ArchivableLibGlobal:MakeBlurEffect(Container)
 
 	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 	local tweenIn = TweenService:Create(Container, tweenInfo, {Position = UDim2.new(0, 0, 0, 0)})
@@ -470,25 +507,25 @@ function ArchivableLib:CreateNotification(TitleContent: string, MessageContent: 
 	end)
 end
 
-function ArchivableLib:CreateMenu(NameInExplorer: string, TitleText: string, IsDarkTheme: boolean)
-	local Theme = {
-		Bg = IsDarkTheme and Color3.fromRGB(30, 30, 30) or Color3.fromRGB(255, 255, 255),
-		Text = IsDarkTheme and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0),
-		Accent = IsDarkTheme and Color3.fromRGB(45, 45, 45) or Color3.fromRGB(240, 240, 240),
-		Close = Color3.fromRGB(255, 80, 80)
-	}
+function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: string, ThemeName: string)
+	local Theme = ArchivableLib.Themes[ThemeName] or ArchivableLib.Themes.DarkTheme
 
 	local Menu = Instance.new("Frame")
 	Menu.Name = NameInExplorer
 	Menu.Parent = ArchivableGUI
 	Menu.BackgroundColor3 = Theme.Bg
-	Menu.BackgroundTransparency = 0.2
-	Menu.Size = UDim2.new(0.441, 0,0.52, 0)
-	Menu.Position = UDim2.new(0.28, 0,0.241, 0)
+	Menu.BackgroundTransparency = 0.3
+	Menu.Size = UDim2.new(0.42173, 0, 0.48649, 0)
+	Menu.Position = UDim2.new(0.28911, 0, 0.25622, 0)
 	Menu.BorderSizePixel = 0
+	Menu.ZIndex = 10
 
 	local Corner = Instance.new("UICorner")
 	Corner.Parent = Menu
+	Corner.CornerRadius = UDim.new(0, 10)
+
+	local AspectRatio = Instance.new("UIAspectRatioConstraint", Menu)
+	AspectRatio.AspectRatio = 1.76
 
 	local Title = Instance.new("TextLabel")
 	Title.Name = "Title"
@@ -497,11 +534,18 @@ function ArchivableLib:CreateMenu(NameInExplorer: string, TitleText: string, IsD
 	Title.TextColor3 = Theme.Text
 	Title.BackgroundColor3 = Color3.new(1, 1, 1)
 	Title.BackgroundTransparency = 1
-	Title.Size = UDim2.new(0.933, 0,0.062, 0)
-	Title.Position = UDim2.new(0.007, 0,0.01, 0)
-	Title.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	Title.Size = UDim2.new(0.92729, 0, 0.09929, 0)
+	Title.Position = UDim2.new(0.01212, 0, 0, 0)
+	Title.FontFace = Font.new("rbxasset://fonts/families/HighwayGothic.json", Enum.FontWeight.Bold)
 	Title.TextScaled = true
 	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.ZIndex = 11
+
+	local TitleTextSizeConstraint = Instance.new("UITextSizeConstraint", Title)
+	TitleTextSizeConstraint.MaxTextSize = 20
+
+	local TitleAspectRatio = Instance.new("UIAspectRatioConstraint", Title)
+	TitleAspectRatio.AspectRatio = 16.43698
 
 	local Close = Instance.new("TextButton")
 	Close.Name = "Close"
@@ -510,93 +554,226 @@ function ArchivableLib:CreateMenu(NameInExplorer: string, TitleText: string, IsD
 	Close.TextColor3 = Theme.Close
 	Close.BackgroundColor3 = Color3.new(1, 1, 1)
 	Close.BackgroundTransparency = 1
-	Close.Size = UDim2.new(0.039, 0,0.069, 0)
-	Close.Position = UDim2.new(0.953, 0,0.006, 0)
+	Close.Size = UDim2.new(0.03662, 0, 0.06444, 0)
+	Close.Position = UDim2.new(0.9491, 0, 0.01735, 0)
 	Close.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
 	Close.TextScaled = true
+	Close.ZIndex = 11
 
-	local Line = Instance.new("Frame")
-	Line.Name = "Line"
-	Line.Parent = Menu
-	Line.BackgroundColor3 = Theme.Text
-	Line.BackgroundTransparency = 0.8
-	Line.Size = UDim2.new(1, 0,0.002, 0)
-	Line.Position = UDim2.new(0, 0,0.075, 0)
-	Line.BorderSizePixel = 0
+	local CloseAspectRatio = Instance.new("UIAspectRatioConstraint", Close)
+
+	local Line1 = Instance.new("Frame")
+	Line1.Name = "Line"
+	Line1.Parent = Menu
+	Line1.BackgroundColor3 = Theme.Text
+	Line1.BackgroundTransparency = 0.8
+	Line1.Size = UDim2.new(1, 0, 0.00222, 0)
+	Line1.Position = UDim2.new(0, 0, 0.09929, 0)
+	Line1.BorderSizePixel = 0
+	Line1.ZIndex = 11
+
+	local Line1AspectRatio = Instance.new("UIAspectRatioConstraint", Line1)
+	Line1AspectRatio.AspectRatio = 792
+
+	local Line2 = Instance.new("Frame")
+	Line2.Name = "Line"
+	Line2.Parent = Menu
+	Line2.BackgroundColor3 = Theme.Text
+	Line2.BackgroundTransparency = 0.8
+	Line2.Size = UDim2.new(1, 0, 0.00444, 0)
+	Line2.Position = UDim2.new(0, 0, 0.86596, 0)
+	Line2.BorderSizePixel = 0
+	Line2.ZIndex = 11
+
+	local Line2AspectRatio = Instance.new("UIAspectRatioConstraint", Line2)
+	Line2AspectRatio.AspectRatio = 396
 
 	local TabsList = Instance.new("Frame")
 	TabsList.Name = "TabsList"
 	TabsList.Parent = Menu
 	TabsList.BackgroundColor3 = Theme.Accent
-	TabsList.BackgroundTransparency = 0.5
-	TabsList.Size = UDim2.new(0.225, 0,0.896, 0)
-	TabsList.Position = UDim2.new(0.007, 0,0.089, 0)
+	TabsList.BackgroundTransparency = 0.4
+	TabsList.Size = UDim2.new(0.24116, 0, 0.72889, 0)
+	TabsList.Position = UDim2.new(0.01212, 0, 0.12, 0)
 	TabsList.BorderSizePixel = 0
-	
-	local TabsList_Corner = Instance.new("UICorner")
-	TabsList_Corner.Parent = TabsList
+	TabsList.ZIndex = 12
 
-	local ListLayout = Instance.new("UIListLayout")
-	ListLayout.Parent = TabsList
+	local TabsList_Corner = Instance.new("UICorner", TabsList)
+
+	local TabsListAspectRatio = Instance.new("UIAspectRatioConstraint", TabsList)
+	TabsListAspectRatio.AspectRatio = 0.58232
+
+	local TabsScrollingFrame = Instance.new("ScrollingFrame")
+	TabsScrollingFrame.Name = "List"
+	TabsScrollingFrame.Parent = TabsList
+	TabsScrollingFrame.Active = true
+	TabsScrollingFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TabsScrollingFrame.BackgroundTransparency = 1
+	TabsScrollingFrame.Size = UDim2.new(1, 0, 0.96341, 0)
+	TabsScrollingFrame.Position = UDim2.new(0, 0, 0.018, 0)
+	TabsScrollingFrame.BorderSizePixel = 0
+	TabsScrollingFrame.ScrollBarThickness = 0
+	TabsScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
+	TabsScrollingFrame.CanvasSize = UDim2.new(0, 0, 1.5, 0)
+
+	local ListLayout = Instance.new("UIListLayout", TabsScrollingFrame)
 	ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-	ListLayout.Padding = UDim.new(0, 7)
 	ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	ListLayout.Padding = UDim.new(0, 4)
+	ListLayout.Wraps = true
 
 	local CurrentTab = Instance.new("Frame")
 	CurrentTab.Name = "CurrentTab"
 	CurrentTab.Parent = Menu
 	CurrentTab.BackgroundColor3 = Theme.Accent
-	CurrentTab.BackgroundTransparency = 0.5
-	CurrentTab.Size = UDim2.new(0.753, 0,0.896, 0)
-	CurrentTab.Position = UDim2.new(0.239, 0,0.089, 0)
+	CurrentTab.BackgroundTransparency = 1
+	CurrentTab.Size = UDim2.new(0.72348, 0, 0.64902, 0)
+	CurrentTab.Position = UDim2.new(0.26212, 0, 0.19987, 0)
 	CurrentTab.BorderSizePixel = 0
-	
-	local CurrentTabCorner = Instance.new("UICorner")
-	CurrentTabCorner.Parent = CurrentTab
+	CurrentTab.ZIndex = 12
+
+	local CurrentTabCorner = Instance.new("UICorner", CurrentTab)
+
+	local CurrentTabAspectRatio = Instance.new("UIAspectRatioConstraint", CurrentTab)
+	CurrentTabAspectRatio.AspectRatio = 1.96192
+
+	local CurrentTabName = Instance.new("TextLabel")
+	CurrentTabName.Name = "CurrentTabName"
+	CurrentTabName.Parent = CurrentTab
+	CurrentTabName.Text = ""
+	CurrentTabName.TextColor3 = Theme.Text
+	CurrentTabName.BackgroundColor3 = Color3.new(1, 1, 1)
+	CurrentTabName.BackgroundTransparency = 1
+	CurrentTabName.Size = UDim2.new(0.99694, 0, 0.09314, 0)
+	CurrentTabName.Position = UDim2.new(-0.00183, 0, -0.10515, 0)
+	CurrentTabName.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	CurrentTabName.TextScaled = true
+	CurrentTabName.TextXAlignment = Enum.TextXAlignment.Left
+	CurrentTabName.BorderSizePixel = 0
+
+	local CurrentTabNameTextSizeConstraint = Instance.new("UITextSizeConstraint", CurrentTabName)
+	CurrentTabNameTextSizeConstraint.MaxTextSize = 25
+
+	local CurrentTabNameAspectRatio = Instance.new("UIAspectRatioConstraint", CurrentTabName)
+	CurrentTabNameAspectRatio.AspectRatio = 21
+
+	local PlayerAvatar = Instance.new("ImageLabel")
+	PlayerAvatar.Name = "PlayerAvatar"
+	PlayerAvatar.Parent = Menu
+	PlayerAvatar.BackgroundColor3 = Color3.new(1, 1, 1)
+	PlayerAvatar.Image = "rbxasset://textures/ui/GuiImagePlaceholder.png"
+	PlayerAvatar.Size = UDim2.new(0.05051, 0, 0.08889, 0)
+	PlayerAvatar.Position = UDim2.new(0.01136, 0, 0.88889, 0)
+	PlayerAvatar.BorderSizePixel = 0
+	PlayerAvatar.ZIndex = 11
+
+	local PlayerAvatarCorner = Instance.new("UICorner", PlayerAvatar)
+	PlayerAvatarCorner.CornerRadius = UDim.new(0, 10)
+
+	local PlayerAvatarAspectRatio = Instance.new("UIAspectRatioConstraint", PlayerAvatar)
+
+	local NameOfPlayer = Instance.new("TextLabel")
+	NameOfPlayer.Name = "NameOfPlayer"
+	NameOfPlayer.Parent = PlayerAvatar
+	NameOfPlayer.Text = "Hello!"
+	NameOfPlayer.TextColor3 = Theme.Text
+	NameOfPlayer.BackgroundColor3 = Color3.new(1, 1, 1)
+	NameOfPlayer.BackgroundTransparency = 1
+	NameOfPlayer.Size = UDim2.new(18.125, 0, 0.475, 0)
+	NameOfPlayer.Position = UDim2.new(1.21212, 0, 0, 0)
+	NameOfPlayer.FontFace = Font.new("rbxasset://fonts/families/JosefinSans.json", Enum.FontWeight.Bold)
+	NameOfPlayer.TextScaled = true
+	NameOfPlayer.TextXAlignment = Enum.TextXAlignment.Left
+	NameOfPlayer.ZIndex = 11
+
+	local NameOfPlayerAspectRatio = Instance.new("UIAspectRatioConstraint", NameOfPlayer)
+	NameOfPlayerAspectRatio.AspectRatio = 38.15789
+
+	local PlaceName = Instance.new("TextLabel")
+	PlaceName.Name = "PlaceName"
+	PlaceName.Parent = PlayerAvatar
+	PlaceName.Text = ""
+	PlaceName.TextColor3 = Theme.Text
+	PlaceName.BackgroundColor3 = Color3.new(1, 1, 1)
+	PlaceName.BackgroundTransparency = 1
+	PlaceName.Size = UDim2.new(18.125, 0, 0.525, 0)
+	PlaceName.Position = UDim2.new(1.21212, 0, 0.475, 0)
+	PlaceName.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	PlaceName.TextScaled = true
+	PlaceName.TextXAlignment = Enum.TextXAlignment.Left
+	PlaceName.ZIndex = 11
+
+	local IDOfPlayerAspectRatio = Instance.new("UIAspectRatioConstraint", PlaceName)
+	IDOfPlayerAspectRatio.AspectRatio = 34.52381
+
+	local lcPlayer = PlayersService.LocalPlayer
+	NameOfPlayer.Text = "Dear, " .. lcPlayer.DisplayName .. "."
+	PlaceName.Text = MarketplaceService:GetProductInfoAsync(game.PlaceId).Name
+
+	local playerAvatarImageLocal = PlayersService:GetUserThumbnailAsync(lcPlayer.UserId, Enum.ThumbnailType.HeadShot, Enum.ThumbnailSize.Size420x420) 
+	PlayerAvatar.Image = playerAvatarImageLocal 
 
 	Close.MouseButton1Click:Connect(function()
 		Menu.Visible = false
 	end)
 
-	ArchivableLib:MakeBlurEffect(Menu)
-	ArchivableLib:MakeDraggable(Menu)
+	ArchivableLibGlobal:MakeDraggable(Menu)
+	ArchivableLibGlobal:MakeBlurEffect(Menu)
 
-	return {
+	local MenuObject = {
 		Gui = Menu,
 		Main = Menu,
-		Tabs = TabsList,
-		Page = CurrentTab
+		Tabs = TabsScrollingFrame,
+		Page = CurrentTab,
+		Theme = Theme,
+		ThemeName = ThemeName
 	}
+
+	ArchivableLib.MenuThemes[Menu] = Theme
+
+	return MenuObject
 end
 
-function ArchivableLib:AddTab(MenuData, TabName: string, ImageID: string) 
-	local TabButton = Instance.new("TextButton")
-	TabButton.Name = TabName .. "Tab"
-	TabButton.Parent = MenuData.Tabs
-	TabButton.Text = TabName
-	TabButton.TextSize = 16
-	TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TabButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TabButton.BackgroundTransparency = 0.9
-	TabButton.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-	TabButton.Size = UDim2.new(0.9, 0, 0.08121, 0)
-	TabButton.TextXAlignment = Enum.TextXAlignment.Left
+function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string) 
+	local Theme = MenuData.Theme
 
-	local UIPadding = Instance.new("UIPadding", TabButton)
-	UIPadding.PaddingLeft = UDim.new(0, 35)
+	local TabButton = Instance.new("TextButton")
+	TabButton.Name = TabName .. "_Tab"
+	TabButton.Parent = MenuData.Tabs
+	TabButton.Text = ""
+	TabButton.BackgroundColor3 = Theme.Text
+	TabButton.BackgroundTransparency = 1
+	TabButton.Size = UDim2.new(0.92, 0, 0.08, 0)
+
+	local TabButtonCorner = Instance.new("UICorner", TabButton)
+
+	local TabButtonAspectRatio = Instance.new("UIAspectRatioConstraint", TabButton)
+	TabButtonAspectRatio.AspectRatio = 4.464
 
 	local Icon = Instance.new("ImageLabel", TabButton)
-	Icon.Name = "Icon"
+	Icon.Name = "Image"
 	Icon.Image = ImageID or ArchivableLib.Assets.imagePlaceholder
-	Icon.Size = UDim2.new(0, 24, 0, 24)
+	Icon.Size = UDim2.new(0.18386, 0, 0.78327, 0)
+	Icon.Position = UDim2.new(0.025, 0, 0.08621, 0)
+	Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 	Icon.BackgroundTransparency = 1
-	Icon.Position = UDim2.new(-0.2562, 5, 0.5, -12)
+	Icon.BorderSizePixel = 0
 
 	local IconCorner = Instance.new("UICorner", Icon)
-	IconCorner.CornerRadius = UDim.new(0, 4)
 
-	local ButtonCorner = Instance.new("UICorner", TabButton)
-	ButtonCorner.CornerRadius = UDim.new(0, 6)
+	local IconAspectRatio = Instance.new("UIAspectRatioConstraint", Icon)
+
+	local TabNameLabel = Instance.new("TextLabel", TabButton)
+	TabNameLabel.Name = "TextLabel"
+	TabNameLabel.Text = TabName
+	TabNameLabel.TextColor3 = Theme.Text
+	TabNameLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TabNameLabel.BackgroundTransparency = 1
+	TabNameLabel.Size = UDim2.new(0.68391, 0, 0.52632, 0)
+	TabNameLabel.Position = UDim2.new(0.27527, 0, 0.23684, 0)
+	TabNameLabel.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold)
+	TabNameLabel.TextScaled = true
+	TabNameLabel.TextXAlignment = Enum.TextXAlignment.Left
 
 	local TabPage = Instance.new("ScrollingFrame")
 	TabPage.Name = TabName .. "Page"
@@ -619,24 +796,53 @@ function ArchivableLib:AddTab(MenuData, TabName: string, ImageID: string)
 
 	TabButton.MouseButton1Click:Connect(function()
 		for _, child in pairs(MenuData.Page:GetChildren()) do
-			if child:IsA("ScrollingFrame") then child.Visible = false end
+			if child:IsA("ScrollingFrame") then 
+				child.Visible = false 
+			end
 		end
 		for _, btn in pairs(MenuData.Tabs:GetChildren()) do
-			if btn:IsA("TextButton") then btn.BackgroundTransparency = 0.9 end
+			if btn:IsA("TextButton") then 
+				btn.BackgroundTransparency = 1 
+			end
 		end
 		TabPage.Visible = true
-		TabButton.BackgroundTransparency = 0.7
+		TabButton.BackgroundTransparency = 0.8
+		if MenuData.Page:FindFirstChild("CurrentTabName") then
+			MenuData.Page.CurrentTabName.Text = TabName
+		end
 	end)
 
-	if #MenuData.Tabs:GetChildren() <= 1 then
+	TabButton.MouseEnter:Connect(function()
+		if not TabPage.Visible then
+			TabButton.BackgroundTransparency = 0.9
+		end
+	end)
+
+	TabButton.MouseLeave:Connect(function()
+		if not TabPage.Visible then
+			TabButton.BackgroundTransparency = 1
+		end
+	end)
+
+	local tabCount = 0
+	for _, child in pairs(MenuData.Tabs:GetChildren()) do
+		if child:IsA("TextButton") then
+			tabCount = tabCount + 1
+		end
+	end
+
+	if tabCount == 1 then
 		TabPage.Visible = true
-		TabButton.BackgroundTransparency = 0.7
+		TabButton.BackgroundTransparency = 0.8
+		if MenuData.Page:FindFirstChild("CurrentTabName") then
+			MenuData.Page.CurrentTabName.Text = TabName
+		end
 	end
 
 	return TabPage
 end
 
-function ArchivableLib:CreateFloatingButton(NameInExplorer: string, ImageID: string, OnClickedButtonCallback)
+function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageID: string, zindex: number, OnClickedButtonCallback)
 	local floatingButton = Instance.new("ImageButton")
 	floatingButton.Visible = false
 	floatingButton.Name = NameInExplorer or "FloatingButton"
@@ -646,19 +852,170 @@ function ArchivableLib:CreateFloatingButton(NameInExplorer: string, ImageID: str
 	floatingButton.BorderSizePixel = 0
 	floatingButton.Image = ImageID or ArchivableLib.Assets.imagePlaceholder
 	floatingButton.Parent = ArchivableGUI
+	floatingButton.ZIndex = zindex or 999999
 
 	local uiCorner = Instance.new("UICorner")
 	uiCorner.Parent = floatingButton
 	
+	local uiaspect = Instance.new("UIAspectRatioConstraint")
+	uiaspect.Parent = floatingButton
+	uiaspect.Name = "UIAspectRatioConstraint"
+	uiaspect.DominantAxis = Enum.DominantAxis.Width
+	uiaspect.AspectType = Enum.AspectType.FitWithinMaxSize
+	uiaspect.AspectRatio = 0.999
 	
-	ArchivableLib:MakeDraggable(floatingButton)
+	ArchivableLibGlobal:MakeDraggable(floatingButton)
 	
 	floatingButton.Visible = true
 	floatingButton.MouseButton1Click:Connect(function()
-		OnClickedButtonCallback()
+		if OnClickedButtonCallback then
+			OnClickedButtonCallback()
+		end
 	end)
+	
+	return floatingButton
+end
+
+function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string, WindowTitle: string, ThemeName: string, OKCallBack)
+	local Theme = ArchivableLib.Themes[ThemeName] or ArchivableLib.Themes.DarkTheme
+
+	local MainFrame = Instance.new("Frame")
+	MainFrame.Name = "KeySystem_Hi3WMbztyKl4np9a0iCkYwra8bXg4a"
+	MainFrame.ZIndex = 10
+	MainFrame.BorderSizePixel = 0
+	MainFrame.BackgroundColor3 = Theme.Bg
+	MainFrame.Size = UDim2.new(0.251, 0, 0.151, 0)
+	MainFrame.Position = UDim2.new(0.374, 0, 0.42, 0)
+	MainFrame.BackgroundTransparency = 0.3
+	MainFrame.Parent = ArchivableGUI
+
+	local UICorner = Instance.new("UICorner")
+	UICorner.CornerRadius = UDim.new(0, 10)
+	UICorner.Parent = MainFrame
+
+	local Title = Instance.new("TextLabel")
+	Title.Name = "Title"
+	Title.Parent = MainFrame
+	Title.TextWrapped = true
+	Title.ZIndex = 11
+	Title.TextScaled = true
+	Title.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	Title.TextColor3 = Theme.Text
+	Title.BackgroundTransparency = 1
+	Title.Size = UDim2.new(0.969, 0, 0.148, 0)
+	Title.Text = WindowTitle or "keysystemtest"
+	Title.Position = UDim2.new(0.012, 0, 0.024, 0)
+
+	local TitleAspectRatio = Instance.new("UIAspectRatioConstraint")
+	TitleAspectRatio.AspectRatio = 21.36863
+	TitleAspectRatio.Parent = Title
+
+	local TextBox = Instance.new("TextBox")
+	TextBox.Parent = MainFrame
+	TextBox.PlaceholderColor3 = Theme.PlaceHoldersColor
+	TextBox.ZIndex = 11
+	TextBox.TextWrapped = true
+	TextBox.TextSize = 31
+	TextBox.TextColor3 = Theme.Text
+	TextBox.TextScaled = true
+	TextBox.BackgroundColor3 = Theme.Accent
+	TextBox.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	TextBox.PlaceholderText = "Enter Key"
+	TextBox.Size = UDim2.new(0.43637, 0, 0.35605, 0)
+	TextBox.Position = UDim2.new(0.538, 0, 0.343, 0)
+	TextBox.Text = ""
+
+	local TextBoxCorner = Instance.new("UICorner")
+	TextBoxCorner.CornerRadius = UDim.new(0, 10)
+	TextBoxCorner.Parent = TextBox
+
+	local TextBoxAspectRatio = Instance.new("UIAspectRatioConstraint")
+	TextBoxAspectRatio.AspectRatio = 4
+	TextBoxAspectRatio.Parent = TextBox
+
+	local TextBoxSizeConstraint = Instance.new("UITextSizeConstraint")
+	TextBoxSizeConstraint.MaxTextSize = 32
+	TextBoxSizeConstraint.Parent = TextBox
+
+	local CheckKey = Instance.new("TextButton")
+	CheckKey.Name = "CheckKey"
+	CheckKey.Parent = MainFrame
+	CheckKey.TextWrapped = true
+	CheckKey.TextSize = 32
+	CheckKey.TextScaled = true
+	CheckKey.TextColor3 = Theme.Text
+	CheckKey.BackgroundColor3 = Theme.Accent
+	CheckKey.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	CheckKey.ZIndex = 11
+	CheckKey.Size = UDim2.new(0.43637, 0, 0.32757, 0)
+	CheckKey.Text = "Check Key"
+	CheckKey.Position = UDim2.new(0.028, 0, 0.229, 0)
+
+	local CheckKeyCorner = Instance.new("UICorner")
+	CheckKeyCorner.CornerRadius = UDim.new(0, 10)
+	CheckKeyCorner.Parent = CheckKey
+
+	local CheckKeyAspectRatio = Instance.new("UIAspectRatioConstraint")
+	CheckKeyAspectRatio.AspectRatio = 4.34783
+	CheckKeyAspectRatio.Parent = CheckKey
+
+	local CheckKeySizeConstraint = Instance.new("UITextSizeConstraint")
+	CheckKeySizeConstraint.MaxTextSize = 32
+	CheckKeySizeConstraint.Parent = CheckKey
+
+	local GetKey = Instance.new("TextButton")
+	GetKey.Name = "GetKey"
+	GetKey.Parent = MainFrame
+	GetKey.TextWrapped = true
+	GetKey.TextSize = 32
+	GetKey.TextScaled = true
+	GetKey.TextColor3 = Theme.Text
+	GetKey.BackgroundColor3 = Theme.Accent
+	GetKey.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	GetKey.ZIndex = 11
+	GetKey.Size = UDim2.new(0.43637, 0, 0.32757, 0)
+	GetKey.Text = "Get Key"
+	GetKey.Position = UDim2.new(0.028, 0, 0.604, 0)
+
+	local GetKeyCorner = Instance.new("UICorner")
+	GetKeyCorner.CornerRadius = UDim.new(0, 10)
+	GetKeyCorner.Parent = GetKey
+
+	local GetKeyAspectRatio = Instance.new("UIAspectRatioConstraint")
+	GetKeyAspectRatio.AspectRatio = 4.34783
+	GetKeyAspectRatio.Parent = GetKey
+
+	local GetKeySizeConstraint = Instance.new("UITextSizeConstraint")
+	GetKeySizeConstraint.MaxTextSize = 32
+	GetKeySizeConstraint.Parent = GetKey
+
+	local FrameAspectRatio = Instance.new("UIAspectRatioConstraint")
+	FrameAspectRatio.AspectRatio = 3.26373
+	FrameAspectRatio.Parent = MainFrame
+
+	ArchivableLibGlobal:MakeDraggable(MainFrame)
+	ArchivableLibGlobal:MakeBlurEffect(MainFrame)
+
+	CheckKey.MouseButton1Click:Connect(function()
+		if TextBox.Text == ValidKey then
+			if OKCallBack then OKCallBack() end
+			MainFrame:Destroy()
+		else
+			TextBox.Text = "Invalid Key"
+			TextBox.TextColor3 = Theme.Close
+			wait(0.5)
+			TextBox.TextColor3 = Theme.Text
+			TextBox.Text = ""
+		end
+	end)
+
+	GetKey.MouseButton1Click:Connect(function()
+		-- setclipboard(GetKeyURL)
+	end)
+
+	return MainFrame
 end
 
 --End
-ArchivableLib:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.lolImage)
-ArchivableLib:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.lolImage)
+ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.lolImage)
+ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.lolImage)
