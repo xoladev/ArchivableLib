@@ -38,6 +38,7 @@ local ArchivableLib = {
 	Themes = {
 		DarkTheme = {
 			Bg = Color3.fromRGB(30, 30, 30),
+			ElementBG = Color3.fromRGB(177, 177, 177),
 			Text = Color3.fromRGB(217, 217, 217),
 			Accent = Color3.fromRGB(38, 38, 38),
 			Close = Color3.fromRGB(182, 182, 182),
@@ -45,13 +46,15 @@ local ArchivableLib = {
 		},
 		WhiteTheme = {
 			Bg = Color3.fromRGB(255, 255, 255),
-			Text = Color3.fromRGB(27, 27, 27),
+			ElementBG = Color3.fromRGB(240, 240, 240),
+			Text = Color3.fromRGB(67, 67, 67),
 			Accent = Color3.fromRGB(240, 240, 240),
 			Close = Color3.fromRGB(31, 31, 31),
 			PlaceHoldersColor = Color3.new(0.462745, 0.462745, 0.462745),
 		},
 		RedTheme = {
 			Bg = Color3.fromRGB(122, 0, 0),
+			ElementBG = Color3.fromRGB(255, 67, 67),
 			Text = Color3.fromRGB(255, 255, 255),
 			Accent = Color3.fromRGB(255, 67, 67),
 			Close = Color3.fromRGB(255, 80, 80),
@@ -412,6 +415,7 @@ function ArchivableLibGlobal:MakeDraggable(FramePath: string)
 end
 
 function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: string)
+	TitleContent = #TitleContent > 23 and string.sub(TitleContent, 1, 23) or TitleContent
 	local Notification = Instance.new("Frame")
 	Notification.Name = "Notification"
 	Notification.Parent = GUI_NotificationsHost
@@ -508,6 +512,7 @@ function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageCon
 end
 
 function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: string, ThemeName: string)
+	TitleText = #TitleText > 78 and string.sub(TitleText, 1, 78) or TitleText
 	local Theme = ArchivableLib.Themes[ThemeName] or ArchivableLib.Themes.DarkTheme
 
 	local Menu = Instance.new("Frame")
@@ -614,13 +619,16 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 	TabsScrollingFrame.BorderSizePixel = 0
 	TabsScrollingFrame.ScrollBarThickness = 0
 	TabsScrollingFrame.ScrollBarImageColor3 = Color3.fromRGB(0, 0, 0)
-	TabsScrollingFrame.CanvasSize = UDim2.new(0, 0, 1.5, 0)
+	TabsScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	TabsScrollingFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	TabsScrollingFrame.ScrollingDirection = Enum.ScrollingDirection.Y
 
 	local ListLayout = Instance.new("UIListLayout", TabsScrollingFrame)
 	ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 	ListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	ListLayout.Padding = UDim.new(0, 4)
-	ListLayout.Wraps = true
+	ListLayout.Wraps = false
+	ListLayout.ItemLineAlignment = Enum.ItemLineAlignment.End
 
 	local CurrentTab = Instance.new("Frame")
 	CurrentTab.Name = "CurrentTab"
@@ -734,7 +742,8 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 	return MenuObject
 end
 
-function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string) 
+function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
+	TabName = #TabName > 12 and string.sub(TabName, 1, 12) or TabName
 	local Theme = MenuData.Theme
 
 	local TabButton = Instance.new("TextButton")
@@ -744,6 +753,9 @@ function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
 	TabButton.BackgroundColor3 = Theme.Text
 	TabButton.BackgroundTransparency = 1
 	TabButton.Size = UDim2.new(0.92, 0, 0.08, 0)
+	
+	local UIScaler = Instance.new("UIScale", TabButton)
+	UIScaler.Scale = 1.5
 
 	local TabButtonCorner = Instance.new("UICorner", TabButton)
 
@@ -785,14 +797,17 @@ function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
 	TabPage.Visible = false
 	TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
 	TabPage.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	TabPage.ScrollBarThickness = 0
 
 	local List = Instance.new("UIListLayout", TabPage)
 	List.Padding = UDim.new(0, 5)
 	List.SortOrder = Enum.SortOrder.LayoutOrder
+	List.Wraps = false
+	List.ItemLineAlignment = Enum.ItemLineAlignment.End
 
-	local PagePadding = Instance.new("UIPadding", TabPage)
-	PagePadding.PaddingLeft = UDim.new(0, 10)
-	PagePadding.PaddingTop = UDim.new(0, 10)
+	--local PagePadding = Instance.new("UIPadding", TabPage)
+	--PagePadding.PaddingLeft = UDim.new(0, 10)
+	--PagePadding.PaddingTop = UDim.new(0, 10)
 
 	TabButton.MouseButton1Click:Connect(function()
 		for _, child in pairs(MenuData.Page:GetChildren()) do
@@ -839,7 +854,10 @@ function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
 		end
 	end
 
-	return TabPage
+	return {
+		Page = TabPage,
+		MenuData = MenuData
+	}
 end
 
 function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageID: string, zindex: number, OnClickedButtonCallback)
@@ -867,16 +885,13 @@ function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageI
 	ArchivableLibGlobal:MakeDraggable(floatingButton)
 	
 	floatingButton.Visible = true
-	floatingButton.MouseButton1Click:Connect(function()
-		if OnClickedButtonCallback then
-			OnClickedButtonCallback()
-		end
-	end)
+	floatingButton.MouseButton1Click:Connect(function() if type(OnClickedButtonCallback) == "function" then OnClickedButtonCallback() end end)
 	
 	return floatingButton
 end
 
 function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string, WindowTitle: string, ThemeName: string, OKCallBack)
+	WindowTitle = #WindowTitle > 51 and string.sub(WindowTitle, 1, 51) or WindowTitle
 	local Theme = ArchivableLib.Themes[ThemeName] or ArchivableLib.Themes.DarkTheme
 
 	local MainFrame = Instance.new("Frame")
@@ -998,11 +1013,10 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 
 	CheckKey.MouseButton1Click:Connect(function()
 		if TextBox.Text == ValidKey then
-			if OKCallBack then OKCallBack() end
-			MainFrame:Destroy()
+			if type(OKCallBack) == "function" then task.spawn(OKCallBack) end MainFrame:Destroy()
 		else
 			TextBox.Text = "Invalid Key"
-			TextBox.TextColor3 = Theme.Close
+			TextBox.TextColor3 = Color3.new(0.870588, 0.25098, 0.25098)
 			wait(0.5)
 			TextBox.TextColor3 = Theme.Text
 			TextBox.Text = ""
@@ -1014,6 +1028,347 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 	end)
 
 	return MainFrame
+end
+
+function ArchivableLibGlobal:AddTextLabelToTab(TabData, BlockTitle: string, BlockDescription: string)
+	local Theme = TabData.MenuData.Theme
+	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
+	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
+	
+	local TextLabelRandom = Instance.new("Frame")
+	TextLabelRandom.Name = "TextLabel_" .. generateRandomString(10)
+	TextLabelRandom.Parent = TabData.Page
+	TextLabelRandom.BackgroundColor3 = Theme.ElementBG
+	TextLabelRandom.BackgroundTransparency = 0.7
+	TextLabelRandom.BorderSizePixel = 0
+	TextLabelRandom.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	TextLabelRandom.Size = UDim2.new(0.982, 0,0.178, 0)
+	TextLabelRandom.Position = UDim2.new(0.01431, 0, 0, 0)
+
+	local Corner = Instance.new("UICorner")
+	Corner.Parent = TextLabelRandom
+
+	local FrameAspectRatio = Instance.new("UIAspectRatioConstraint", TextLabelRandom)
+	FrameAspectRatio.AspectRatio = 10.654
+
+	local TitleLabel = Instance.new("TextLabel")
+	TitleLabel.Name = "Title"
+	TitleLabel.Parent = TextLabelRandom
+	TitleLabel.Text = BlockTitle or "Not Set!"
+	TitleLabel.TextColor3 = Theme.Text
+	TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TitleLabel.BackgroundTransparency = 1
+	TitleLabel.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	TitleLabel.Position = UDim2.new(-0.00188, 0, 0.05556, 0)
+	TitleLabel.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	TitleLabel.TextSize = 14
+	TitleLabel.TextScaled = true
+	TitleLabel.TextWrapped = true
+	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TitleLabel.BorderSizePixel = 0
+	TitleLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+	local TitlePadding = Instance.new("UIPadding")
+	TitlePadding.Parent = TitleLabel
+	TitlePadding.PaddingLeft = UDim.new(0, 10)
+
+	local TitleTextSizeConstraint = Instance.new("UITextSizeConstraint", TitleLabel)
+	TitleTextSizeConstraint.MaxTextSize = 25
+
+	local TitleAspectRatio = Instance.new("UIAspectRatioConstraint", TitleLabel)
+	TitleAspectRatio.AspectRatio = 12.64
+
+	local DescriptionLabel = Instance.new("TextLabel")
+	DescriptionLabel.Name = "Description"
+	DescriptionLabel.Parent = TextLabelRandom
+	DescriptionLabel.Text = BlockDescription or "Not Set!"
+	DescriptionLabel.TextColor3 = Theme.Text
+	DescriptionLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	DescriptionLabel.BackgroundTransparency = 1
+	DescriptionLabel.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	DescriptionLabel.Position = UDim2.new(0, 0, 0.51852, 0)
+	DescriptionLabel.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	DescriptionLabel.TextSize = 14
+	DescriptionLabel.TextScaled = true
+	DescriptionLabel.TextWrapped = true
+	DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+	DescriptionLabel.BorderSizePixel = 0
+	DescriptionLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+	local DescriptionPadding = Instance.new("UIPadding")
+	DescriptionPadding.Parent = DescriptionLabel
+	DescriptionPadding.PaddingLeft = UDim.new(0, 10)
+
+	local DescriptionTextSizeConstraint = Instance.new("UITextSizeConstraint", DescriptionLabel)
+	DescriptionTextSizeConstraint.MaxTextSize = 25
+
+	local DescriptionAspectRatio = Instance.new("UIAspectRatioConstraint", DescriptionLabel)
+	DescriptionAspectRatio.AspectRatio = 12.64
+
+	return TextLabelRandom
+end
+
+function ArchivableLibGlobal:AddButtonToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+	local Theme = TabData.MenuData.Theme
+	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
+	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
+	
+	local ButtonRandom = Instance.new("TextButton")
+	ButtonRandom.Name = "Button_" .. generateRandomString(10)
+	ButtonRandom.Parent = TabData.Page
+	ButtonRandom.Text = ""
+	ButtonRandom.TextColor3 = Color3.fromRGB(0, 0, 0)
+	ButtonRandom.BackgroundColor3 = Theme.ElementBG
+	ButtonRandom.BackgroundTransparency = 0.7
+	ButtonRandom.BorderSizePixel = 0
+	ButtonRandom.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	ButtonRandom.Size = UDim2.new(0.982, 0, 0.178, 0)
+	ButtonRandom.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	ButtonRandom.TextSize = 14
+	ButtonRandom.TextWrapped = true
+
+	local Corner = Instance.new("UICorner")
+	Corner.Parent = ButtonRandom
+
+	local ButtonAspectRatio = Instance.new("UIAspectRatioConstraint", ButtonRandom)
+	ButtonAspectRatio.AspectRatio = 10.654
+
+	local TitleLabel = Instance.new("TextLabel")
+	TitleLabel.Name = "Title"
+	TitleLabel.Parent = ButtonRandom
+	TitleLabel.Text = BlockTitle or "Not Set!"
+	TitleLabel.TextColor3 = Theme.Text
+	TitleLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	TitleLabel.BackgroundTransparency = 1
+	TitleLabel.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	TitleLabel.Position = UDim2.new(-0.00188, 0, 0.05556, 0)
+	TitleLabel.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	TitleLabel.TextSize = 14
+	TitleLabel.TextScaled = true
+	TitleLabel.TextWrapped = true
+	TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TitleLabel.BorderSizePixel = 0
+	TitleLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+	local TitlePadding = Instance.new("UIPadding", TitleLabel)
+	TitlePadding.PaddingLeft = UDim.new(0, 10)
+
+	local TitleTextSizeConstraint = Instance.new("UITextSizeConstraint", TitleLabel)
+	TitleTextSizeConstraint.MaxTextSize = 25
+
+	local TitleAspectRatio = Instance.new("UIAspectRatioConstraint", TitleLabel)
+	TitleAspectRatio.AspectRatio = 12.64
+
+	local DescriptionLabel = Instance.new("TextLabel")
+	DescriptionLabel.Name = "Description"
+	DescriptionLabel.Parent = ButtonRandom
+	DescriptionLabel.Text = BlockDescription or "Not Set!"
+	DescriptionLabel.TextColor3 = Theme.Text
+	DescriptionLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	DescriptionLabel.BackgroundTransparency = 1
+	DescriptionLabel.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	DescriptionLabel.Position = UDim2.new(0, 0, 0.51852, 0)
+	DescriptionLabel.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	DescriptionLabel.TextSize = 14
+	DescriptionLabel.TextScaled = true
+	DescriptionLabel.TextWrapped = true
+	DescriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
+	DescriptionLabel.BorderSizePixel = 0
+	DescriptionLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+
+	local DescriptionPadding = Instance.new("UIPadding", DescriptionLabel)
+	DescriptionPadding.PaddingLeft = UDim.new(0, 10)
+
+	local DescriptionTextSizeConstraint = Instance.new("UITextSizeConstraint", DescriptionLabel)
+	DescriptionTextSizeConstraint.MaxTextSize = 25
+
+	local DescriptionAspectRatio = Instance.new("UIAspectRatioConstraint", DescriptionLabel)
+	DescriptionAspectRatio.AspectRatio = 12.64
+
+	local Icon = Instance.new("ImageLabel", ButtonRandom)
+	Icon.Name = "ImageLabel"
+	Icon.Image = "rbxassetid://128862014045443"
+	Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Icon.BackgroundTransparency = 1
+	Icon.BorderSizePixel = 0
+	Icon.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Icon.Size = UDim2.new(0.06432, 0, 0.68523, 0)
+	Icon.Position = UDim2.new(0.92433, 0, 0.15345, 0)
+
+	local IconAspectRatio = Instance.new("UIAspectRatioConstraint", Icon)
+
+	if type(PressCallback) == "function" then
+		ButtonRandom.MouseButton1Click:Connect(PressCallback)
+
+		ButtonRandom.MouseEnter:Connect(function()
+			ButtonRandom.BackgroundTransparency = 0.5
+		end)
+
+		ButtonRandom.MouseLeave:Connect(function()
+			ButtonRandom.BackgroundTransparency = 0.7
+		end)
+	end
+
+	return ButtonRandom
+end
+
+function ArchivableLibGlobal:AddSliderToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+	local Theme = TabData.MenuData.Theme
+	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
+	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
+	
+	local Slider_Random = Instance.new("TextButton")
+	Slider_Random.Parent = TabData.Page
+	Slider_Random.TextWrapped = true
+	Slider_Random.BorderSizePixel = 0
+	Slider_Random.TextSize = 14
+	Slider_Random.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Slider_Random.BackgroundColor3 = Theme.ElementBG
+	Slider_Random.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	Slider_Random.BackgroundTransparency = 0.7
+	Slider_Random.Size = UDim2.new(0.982, 0, 0.178, 0)
+	Slider_Random.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Slider_Random.Text = ""
+	Slider_Random.Name = "Slider_" .. generateRandomString(10)
+
+	local UICorner_3 = Instance.new("UICorner", Slider_Random)
+
+	local UIAspectRatioConstraint_3 = Instance.new("UIAspectRatioConstraint", Slider_Random)
+	UIAspectRatioConstraint_3.AspectRatio = 10.654
+
+	local Title = Instance.new("TextLabel")
+	Title.Parent = Slider_Random
+	Title.TextWrapped = true
+	Title.BorderSizePixel = 0
+	Title.TextSize = 14
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.TextScaled = true
+	Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Title.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	Title.TextColor3 = Theme.Text
+	Title.BackgroundTransparency = 1
+	Title.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Title.Text = BlockTitle or "Not Set!"
+	Title.Name = "Title"
+	Title.Position = UDim2.new(-0.00188, 0, 0.05556, 0)
+
+	local UIPadding_1 = Instance.new("UIPadding", Title)
+	UIPadding_1.PaddingLeft = UDim.new(0, 10)
+
+	local UITextSizeConstraint_1 = Instance.new("UITextSizeConstraint", Title)
+	UITextSizeConstraint_1.MaxTextSize = 25
+	local UIAspectRatioConstraint_4 = Instance.new("UIAspectRatioConstraint", Title)
+	UIAspectRatioConstraint_4.AspectRatio = 12.64
+
+	local Description = Instance.new("TextLabel")
+	Description.Parent = Slider_Random
+	Description.TextWrapped = true
+	Description.BorderSizePixel = 0
+	Description.TextSize = 14
+	Description.TextXAlignment = Enum.TextXAlignment.Left
+	Description.TextScaled = true
+	Description.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Description.FontFace = Font.new("rbxasset://fonts/families/RobotoMono.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
+	Description.TextColor3 = Theme.Text
+	Description.BackgroundTransparency = 1
+	Description.Size = UDim2.new(0.59399, 0, 0.46296, 0)
+	Description.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Description.Text = BlockDescription or "Not Set!"
+	Description.Name = "Description"
+	Description.Position = UDim2.new(0, 0, 0.51852, 0)
+
+	local UIPadding_2 = Instance.new("UIPadding", Description)
+	UIPadding_2.PaddingLeft = UDim.new(0, 10)
+	
+	local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint", Description)
+	UITextSizeConstraint_2.MaxTextSize = 25
+
+	local UIAspectRatioConstraint_5 = Instance.new("UIAspectRatioConstraint", Description)
+	UIAspectRatioConstraint_5.AspectRatio = 12.64
+
+	local Slider = Instance.new("Frame")
+	Slider.Parent = Slider_Random
+	Slider.BorderSizePixel = 0
+	Slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Slider.Size = UDim2.new(0.07585, 0, 0.36367, 0)
+	Slider.Position = UDim2.new(0.89373, 0, 0.31049, 0)
+	Slider.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Slider.Name = "Slider"
+
+	local Dot = Instance.new("Frame")
+	Dot.Parent = Slider
+	Dot.BorderSizePixel = 0
+	Dot.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	Dot.Size = UDim2.new(0.625, 0, 1.38889, 0)
+	Dot.Position = UDim2.new(-0.13486, 0, -0.2381, 0)
+	Dot.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Dot.Name = "Dot"
+
+	local UICorner_4 = Instance.new("UICorner", Dot)
+	UICorner_4.CornerRadius = UDim.new(1, 0)
+
+	local UIAspectRatioConstraint_6 = Instance.new("UIAspectRatioConstraint", Dot)
+
+	local UICorner_5 = Instance.new("UICorner", Slider)
+	UICorner_5.CornerRadius = UDim.new(0, 6)
+
+	local UIAspectRatioConstraint_7 = Instance.new("UIAspectRatioConstraint", Slider)
+	UIAspectRatioConstraint_7.AspectRatio = 2.22222
+	
+	local state = false
+	local bg, active, clicker = Slider, Dot, Slider_Random
+	local info = TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+	
+	local function toggle()
+		local posX = state and 0.688 or -0.135
+		local colBg = state and Color3.new(0.13, 1, 0) or Color3.new(1, 0.13, 0.13)
+		local colDot = state and Color3.new(0.08, 0.63, 0) or Color3.new(0.63, 0.08, 0.08)
+
+		TweenService:Create(active, info, {
+			Position = UDim2.new(posX, 0, active.Position.Y.Scale, active.Position.Y.Offset),
+			BackgroundColor3 = colDot
+		}):Play()
+
+		TweenService:Create(bg, info, {BackgroundColor3 = colBg}):Play()
+	end
+	
+	toggle()
+	
+	Slider_Random.MouseButton1Click:Connect(function()
+		state = not state
+		toggle()
+		if PressCallback then
+			PressCallback(state)
+		end
+	end)
+end
+
+function ArchivableLibGlobal:AddSeparator(TabData, BlockText: string)
+	local Theme = TabData.MenuData.Theme
+	BlockText = #BlockText > 40 and string.sub(BlockText, 1, 40) or BlockText
+	
+	local Separator = Instance.new("TextLabel")
+	Separator.Name = "Separator_" .. generateRandomString(10)
+	Separator.Parent = TabData.Page
+	Separator.Text = "Elements"
+	Separator.TextColor3 = Theme.Text
+	Separator.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Separator.BackgroundTransparency = 1
+	Separator.Size = UDim2.new(1.15541, 0, 0.07516, 0)
+	Separator.Position = UDim2.new(-0.1888, 0, 0.58794, 0)
+	Separator.FontFace = Font.new("rbxasset://fonts/families/FredokaOne.json", Enum.FontWeight.Regular, Enum.FontStyle.Normal)
+	Separator.TextSize = 14
+	Separator.TextScaled = true
+	Separator.TextWrapped = true
+	Separator.TextXAlignment = Enum.TextXAlignment.Left
+	Separator.BorderSizePixel = 0
+
+	local SeparatorAspectRatio = Instance.new("UIAspectRatioConstraint", Separator)
+	SeparatorAspectRatio.AspectRatio = 25.23212
+
+	local SeparatorTextSizeConstraint = Instance.new("UITextSizeConstraint", Separator)
+	SeparatorTextSizeConstraint.MaxTextSize = 20
 end
 
 --End
