@@ -24,7 +24,8 @@ local PlayersService = game:GetService("Players")
 local ArchivableLib = {
 	Assets = {
 		imagePlaceholder = "rbxasset://textures/ui/GuiImagePlaceholder.png",
-		lolImage = "http://www.roblox.com/asset/?id=13866870186",
+		dogLOLImage = 13866870186,
+		catLOLImage = 107857607232375,
 		Root = {
 			name = "ArchivableLib",
 			creator = "xolaDev",
@@ -67,7 +68,8 @@ local ArchivableLib = {
 local ArchivableLibGlobal = {
 	Assets = {
 		imagePlaceholder = ArchivableLib.Assets.imagePlaceholder,
-		lolImage = ArchivableLib.Assets.lolImage,
+		dogLOLImage = ArchivableLib.Assets.dogLOLImage,
+		catLOLImage = ArchivableLib.Assets.catLOLImage,
 	},
 }
 _G.ALib = ArchivableLibGlobal
@@ -87,7 +89,6 @@ local function generateRandomString(length: number): string
 	return table.concat(result)
 end
 local generatedRandomString = generateRandomString(30)
-
 local function printPointer(text: string, level: number)
 	if level == 1 then
 		print("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
@@ -96,6 +97,9 @@ local function printPointer(text: string, level: number)
 	elseif level == 3 then
 		error("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
 	end
+end
+local function processImageID(ImageID)
+	return "rbxassetid://" .. tostring(ImageID)
 end
 
 -- GUI
@@ -414,8 +418,10 @@ function ArchivableLibGlobal:MakeDraggable(FramePath: string)
 	return newScript
 end
 
-function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: string)
+function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: number)
+	ImageID = processImageID(ImageID)
 	TitleContent = #TitleContent > 23 and string.sub(TitleContent, 1, 23) or TitleContent
+	
 	local Notification = Instance.new("Frame")
 	Notification.Name = "Notification"
 	Notification.Parent = GUI_NotificationsHost
@@ -742,7 +748,8 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 	return MenuObject
 end
 
-function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
+function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: number)
+	ImageID = processImageID(ImageID)
 	TabName = #TabName > 12 and string.sub(TabName, 1, 12) or TabName
 	local Theme = MenuData.Theme
 
@@ -860,7 +867,9 @@ function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: string)
 	}
 end
 
-function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageID: string, zindex: number, OnClickedButtonCallback)
+function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageID: number, zindex: number, OnClickedButtonCallback)
+	ImageID = processImageID(ImageID)
+	
 	local floatingButton = Instance.new("ImageButton")
 	floatingButton.Visible = false
 	floatingButton.Name = NameInExplorer or "FloatingButton"
@@ -1372,5 +1381,5 @@ function ArchivableLibGlobal:AddSeparator(TabData, BlockText: string)
 end
 
 --End
-ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.lolImage)
-ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.lolImage)
+ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.dogLOLImage)
+ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.dogLOLImage)
