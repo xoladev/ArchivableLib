@@ -1427,12 +1427,18 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	InputBox.TextScaled = true
 	InputBox.BackgroundColor3 = Theme.ElementActiveBG
 	InputBox.FontFace = Font.new("rbxasset://fonts/families/SourceSansPro.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	InputBox.Size = UDim2.new(0, 136, 0, 34)
+	InputBox.Size = UDim2.new(0.258, 0,0.687, 0)
 	InputBox.Position = UDim2.new(0.72441, 0, 0.14143, 0)
 	InputBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	InputBox.Text = ""
 	InputBox.PlaceholderText = PlaceHolderText or ArchivableLib.Assets.NotSetText
 	InputBox.BackgroundTransparency = 0.8
+	
+	local UIAspectRatio = Instance.new("UIAspectRatioConstraint")
+	UIAspectRatio.Parent = InputBox
+	UIAspectRatio.AspectRatio = 4
+	UIAspectRatio.DominantAxis = Enum.DominantAxis.Width
+	UIAspectRatio.AspectType = Enum.AspectType.FitWithinMaxSize
 
 	local UITextSizeConstraint = Instance.new("UITextSizeConstraint")
 	UITextSizeConstraint.Parent = InputBox
