@@ -1,4 +1,4 @@
 Анимация появления окон и кнопок
 Исправить там где getkey в keysystem
-input value
 dropbox
+colorpicker
