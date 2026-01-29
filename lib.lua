@@ -527,6 +527,7 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 
 	local Menu = Instance.new("Frame")
 	Menu.Name = NameInExplorer
+	Menu.Visible = false
 	Menu.Parent = ArchivableGUI
 	Menu.BackgroundColor3 = Theme.Bg
 	Menu.BackgroundTransparency = 0.3
@@ -735,9 +736,6 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 		Menu.Visible = false
 	end)
 
-	ArchivableLibGlobal:MakeDraggable(Menu)
-	ArchivableLibGlobal:MakeBlurEffect(Menu)
-
 	local MenuObject = {
 		Gui = Menu,
 		Main = Menu,
@@ -748,6 +746,10 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 	}
 
 	ArchivableLib.MenuThemes[Menu] = Theme
+	
+	ArchivableLibGlobal:MakeDraggable(Menu)
+	ArchivableLibGlobal:MakeBlurEffect(Menu)
+	Menu.Visible = true
 
 	return MenuObject
 end
@@ -915,6 +917,7 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 	MainFrame.Size = UDim2.new(0.251, 0, 0.151, 0)
 	MainFrame.Position = UDim2.new(0.374, 0, 0.42, 0)
 	MainFrame.BackgroundTransparency = 0.3
+	MainFrame.Visible = false
 	MainFrame.Parent = ArchivableGUI
 
 	local UICorner = Instance.new("UICorner")
@@ -1021,9 +1024,6 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 	FrameAspectRatio.AspectRatio = 3.26373
 	FrameAspectRatio.Parent = MainFrame
 
-	ArchivableLibGlobal:MakeDraggable(MainFrame)
-	ArchivableLibGlobal:MakeBlurEffect(MainFrame)
-
 	CheckKey.MouseButton1Click:Connect(function()
 		if TextBox.Text == ValidKey then
 			if type(OKCallBack) == "function" then task.spawn(OKCallBack) end MainFrame:Destroy()
@@ -1041,9 +1041,14 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 			setclipboard(GetKeyURL)
 			ArchivableLibGlobal:CreateNotification("Info", "Text copied to clipboard.", 1.5, ArchivableLib.Assets.catLOLImage)
 		else
+			printPointer("Your executor does not support this function.", 2)
 			ArchivableLibGlobal:CreateNotification("Error", "Your executor does not support this function.", 1.5, ArchivableLib.Assets.catLOLImage)
 		end
 	end)
+	
+	ArchivableLibGlobal:MakeDraggable(MainFrame)
+	ArchivableLibGlobal:MakeBlurEffect(MainFrame)
+	MainFrame.Visible = true
 
 	return MainFrame
 end
