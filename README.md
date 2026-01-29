@@ -33,13 +33,13 @@ _G.ALib:CreateMenu(NameInExplorer: string, TitleText: string, ThemeName: string)
 _G.ALib:AddTab(MenuData, TabName: string, ImageID: string)
 
 -- Добавление текстового блока (TabData, Заголовок, Описание)
-_G.ALib:AddTextLabelToTab(TabData, BlockTitle: string, BlockDescription: string)
+_G.ALib:AddTextLabel(TabData, BlockTitle: string, BlockDescription: string)
 
 -- Добавление кнопки (TabData, Заголовок, Описание, Callback-функция)
-_G.ALib:AddButtonToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+_G.ALib:AddButton(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 
 -- Добавление слайдера (TabData, Заголовок, Описание, Callback-функция)
-_G.ALib:AddSliderToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+_G.ALib:AddSlider(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 
 -- Добавление элемент ввода значения (TabData, Заголовок, Описание, PlaceHolder, OnEditCompleteCallback)
 _G.ALib:AddInputValue(TabData, BlockTitle: string, BlockDescription: string, PlaceHolderText: string, OnEditCompleteCallback)
