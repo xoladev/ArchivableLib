@@ -1,2 +1,5 @@
 Анимация появления окон и кнопок
 Исправить там где getkey в keysystem
+slider при запуске делает callback
+input value
+dropbox
