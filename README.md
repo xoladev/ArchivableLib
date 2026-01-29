@@ -32,16 +32,19 @@ _G.ALib:CreateMenu(NameInExplorer: string, TitleText: string, ThemeName: string)
 -- Добавление вкладок (Объект меню, Название вкладки, ID иконки)
 _G.ALib:AddTab(MenuData, TabName: string, ImageID: string)
 
--- Добавление текстового блока (ScrollingFrame, Заголовок, Описание)
+-- Добавление текстового блока (TabData, Заголовок, Описание)
 _G.ALib:AddTextLabelToTab(TabData, BlockTitle: string, BlockDescription: string)
 
--- Добавление кнопки (ScrollingFrame, Заголовок, Описание, Callback-функция)
+-- Добавление кнопки (TabData, Заголовок, Описание, Callback-функция)
 _G.ALib:AddButtonToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 
--- Добавление слайдера (ScrollingFrame, Заголовок, Описание, Callback-функция)
+-- Добавление слайдера (TabData, Заголовок, Описание, Callback-функция)
 _G.ALib:AddSliderToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 
--- Добавление разделителя (ScrollingFrame, Текст)
+-- Добавление элемент ввода значения (TabData, Заголовок, Описание, PlaceHolder, OnEditCompleteCallback)
+_G.ALib:AddInputValue(TabData, BlockTitle: string, BlockDescription: string, PlaceHolderText: string, OnEditCompleteCallback)
+
+-- Добавление разделителя (TabData, Текст)
 _G.ALib:AddSeparator(TabData, BlockText: string)
 
 -- Создание плавающей кнопки (Название, ID иконки, ZIndex, Callback-функция)
