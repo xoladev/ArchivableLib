@@ -61,3 +61,12 @@ _G.ALib:MakeDraggable(FramePath: string)
 
 -- Полная очистка и удаление библиотеки
 _G.ALib:DestroyLib()
+```
+---
+
+## 🛠 Начало работы
+
+### Для подгрузки библиотеки в свой скрипт
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib/refs/heads/main/lib.lua"))()
+```
