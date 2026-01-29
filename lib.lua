@@ -1043,7 +1043,7 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 	return MainFrame
 end
 
-function ArchivableLibGlobal:AddTextLabelToTab(TabData, BlockTitle: string, BlockDescription: string)
+function ArchivableLibGlobal:AddTextLabel(TabData, BlockTitle: string, BlockDescription: string)
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
@@ -1121,7 +1121,7 @@ function ArchivableLibGlobal:AddTextLabelToTab(TabData, BlockTitle: string, Bloc
 	return TextLabelRandom
 end
 
-function ArchivableLibGlobal:AddButtonToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+function ArchivableLibGlobal:AddButton(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
@@ -1225,7 +1225,7 @@ function ArchivableLibGlobal:AddButtonToTab(TabData, BlockTitle: string, BlockDe
 	return ButtonRandom
 end
 
-function ArchivableLibGlobal:AddSliderToTab(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
+function ArchivableLibGlobal:AddSlider(TabData, BlockTitle: string, BlockDescription: string, PressCallback)
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
