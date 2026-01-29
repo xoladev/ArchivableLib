@@ -1,4 +1,4 @@
-
+loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib/refs/heads/main/lib.lua"))()
 
 function menuv()
 	local myMenu = _G.ALib:CreateMenu("LibDemo", "Archivable Library Demo", "DarkTheme")
