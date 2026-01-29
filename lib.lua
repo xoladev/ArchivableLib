@@ -1037,7 +1037,12 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 	end)
 
 	GetKey.MouseButton1Click:Connect(function()
-		-- setclipboard(GetKeyURL)
+		if setclipboard then
+			setclipboard(GetKeyCorner)
+			ArchivableLibGlobal:CreateNotification("Info", "Text copied to clipboard.", 1.5, ArchivableLib.Assets.catLOLImage)
+		else
+			ArchivableLibGlobal:CreateNotification("Error", "Your executor does not support this function.", 1.5, ArchivableLib.Assets.catLOLImage)
+		end
 	end)
 
 	return MainFrame
