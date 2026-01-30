@@ -1,3 +1,5 @@
 Анимация появления окон и кнопок
 dropdown
 colorpicker
+addtheme()
+звуки
