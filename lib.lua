@@ -21,7 +21,9 @@ local MouseService = game:GetService("MouseService")
 local PlayersService = game:GetService("Players")
 local TestService = game:GetService("TestService")
 
--- Locals
+------------------------------------------------------------------------------------
+--Locals
+------------------------------------------------------------------------------------
 local ArchivableLib = {
 	Assets = {
 		imagePlaceholder = "rbxasset://textures/ui/GuiImagePlaceholder.png",
@@ -79,7 +81,9 @@ local ArchivableLibGlobal = {
 }
 _G.ALib = ArchivableLibGlobal
 
+------------------------------------------------------------------------------------
 --Core
+------------------------------------------------------------------------------------
 local function generateRandomString(length: number): string
 	local characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	local result = {}
@@ -107,7 +111,9 @@ local function processImageID(ImageID)
 	return "rbxassetid://" .. tostring(ImageID)
 end
 
--- GUI
+------------------------------------------------------------------------------------
+--GUI
+------------------------------------------------------------------------------------
 local DepthOfFieldForBlur = Instance.new("DepthOfFieldEffect")
 DepthOfFieldForBlur.Name = "DepthOfField"
 DepthOfFieldForBlur.Parent = game.Lighting
@@ -148,7 +154,9 @@ GUI_NotificationsHost_UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Bo
 GUI_NotificationsHost_UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 GUI_NotificationsHost_UIListLayout.ItemLineAlignment = Enum.ItemLineAlignment.Center
 
+------------------------------------------------------------------------------------
 --Files
+------------------------------------------------------------------------------------
 local ArchivableFiles = ArchivableLib.Assets.Files.path:FindFirstChild(ArchivableLib.Assets.Root.name)
 if not ArchivableFiles then
 	ArchivableFiles = Instance.new("Folder")
@@ -171,7 +179,9 @@ local ArchivableFilesTemp = Instance.new("Folder")
 ArchivableFilesTemp.Name = "session_" .. tostring(generatedRandomString)
 ArchivableFilesTemp.Parent = ArchivableFiles
 
--- Functions
+------------------------------------------------------------------------------------
+--Functions
+------------------------------------------------------------------------------------
 function ArchivableLibGlobal:DestroyLib()
 	ArchivableGUI:Destroy()
 	ArchivableFilesTemp:Destroy()
@@ -1524,7 +1534,9 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	end)
 end
 
+------------------------------------------------------------------------------------
 --End
+------------------------------------------------------------------------------------
 printPointer("Loaded! - V: " .. ArchivableLib.Assets.Root.version, 1)
 ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.dogLOLImage)
 ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.dogLOLImage)
