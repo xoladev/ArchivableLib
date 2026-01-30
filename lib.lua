@@ -19,6 +19,7 @@ local GuiService = game:GetService("GuiService")
 local KeyboardService = game:GetService("KeyboardService")
 local MouseService = game:GetService("MouseService")
 local PlayersService = game:GetService("Players")
+local TestService = game:GetService("TestService")
 
 -- Locals
 local ArchivableLib = {
@@ -26,7 +27,7 @@ local ArchivableLib = {
 		imagePlaceholder = "rbxasset://textures/ui/GuiImagePlaceholder.png",
 		dogLOLImage = 13866870186,
 		catLOLImage = 107857607232375,
-		NotSetText = "Element Value Not Set!",
+		NotSetText = "",
 		Root = {
 			name = "ArchivableLib",
 			creator = "xolaDev",
@@ -94,12 +95,12 @@ local function generateRandomString(length: number): string
 end
 local generatedRandomString = generateRandomString(30)
 local function printPointer(text: string, level: number)
-	if level == 1 then
-		print("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
-	elseif level == 2 then
-		warn("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
-	elseif level == 3 then
-		error("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
+	if level == 1 then --Normal
+		TestService:Message("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
+	elseif level == 2 then --Warn
+		TestService:Warn(1 == 2, "[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
+	elseif level == 3 then --Error
+		TestService:Error("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
 	end
 end
 local function processImageID(ImageID)
@@ -148,15 +149,26 @@ GUI_NotificationsHost_UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 GUI_NotificationsHost_UIListLayout.ItemLineAlignment = Enum.ItemLineAlignment.Center
 
 --Files
-local ArchivableFiles
-if not ArchivableLib.Assets.Files.path:FindFirstChild(ArchivableLib.Assets.Root.name) then
+local ArchivableFiles = ArchivableLib.Assets.Files.path:FindFirstChild(ArchivableLib.Assets.Root.name)
+if not ArchivableFiles then
 	ArchivableFiles = Instance.new("Folder")
 	ArchivableFiles.Name = ArchivableLib.Assets.Root.name
 	ArchivableFiles.Parent = ArchivableLib.Assets.Files.path
 end
 
+if not (ArchivableFiles and ArchivableFiles:IsA("Folder") and ArchivableFiles:GetAttribute("ALIB_Attachment")) then
+	if ArchivableFiles then 
+		ArchivableFiles:Destroy() 
+	end
+
+	ArchivableFiles = Instance.new("Folder")
+	ArchivableFiles.Name = ArchivableLib.Assets.Root.name
+	ArchivableFiles:SetAttribute("ALIB_Attachment", true)
+	ArchivableFiles.Parent = ArchivableLib.Assets.Files.path
+end
+
 local ArchivableFilesTemp = Instance.new("Folder")
-ArchivableFilesTemp.Name = "session_" .. generatedRandomString
+ArchivableFilesTemp.Name = "session_" .. tostring(generatedRandomString)
 ArchivableFilesTemp.Parent = ArchivableFiles
 
 -- Functions
@@ -1513,5 +1525,6 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 end
 
 --End
+printPointer("Loaded!", 1)
 ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.dogLOLImage)
 ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.dogLOLImage)
