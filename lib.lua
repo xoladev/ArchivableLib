@@ -32,7 +32,7 @@ local ArchivableLib = {
 			name = "ArchivableLib",
 			creator = "xolaDev",
 			description = "",
-			versionn = "0.5",
+			version = "4.8",
 		},
 		Files = {
 			path = RSService,
@@ -1525,6 +1525,6 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 end
 
 --End
-printPointer("Loaded!", 1)
+printPointer("Loaded! - V: " .. ArchivableLib.Assets.Root.version, 1)
 ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.dogLOLImage)
 ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.dogLOLImage)
