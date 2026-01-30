@@ -3,3 +3,4 @@ dropdown
 colorpicker
 addtheme()
 звуки
+gui и желательно файлы в coregui
