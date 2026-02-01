@@ -2,6 +2,5 @@
 анимации например при переходе между вкладок типо и подобное
 dropdown
 colorpicker
-addtheme()
 звуки
 gui и файлы в coregui
