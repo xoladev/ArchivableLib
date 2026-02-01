@@ -75,9 +75,4 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib
 ```
 
 ### Для Roblox\Roblox Studio
-* Создайте Script (серверный) и поместите его в ServerScriptService
-* Включите Http запросы в настройках игры
-* Вставте в начало скрипта:
-```lua
-loadstring(game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/xoladev/ArchivableLib/refs/heads/main/lib.lua"))()
-```
+Данная библиотека пока-что недоступна для Roblox Studio
