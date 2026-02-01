@@ -3,7 +3,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib
 local ALib = _G.ALib
 
 function MenuFunc()
-	local myMenu = ALib:CreateMenu("LibDemo", "Archivable Library Demo", "DarkTheme")
+	local myMenu = ALib:CreateMenu("LibDemo", "Archivable Library Demo", "Midnight")
 	local ElementsTab = ALib:AddTab(myMenu, "Elements", ALib.Assets.dogLOLImage)
 	local SettingsTab = ALib:AddTab(myMenu, "Settings", ALib.Assets.catLOLImage)
 
@@ -34,4 +34,14 @@ function MenuFunc()
 	end)
 end
 
+ALib:NewTheme({
+	ThemeName = "Midnight",
+	Bg = Color3.fromRGB(20, 20, 20),
+	ElementBG = Color3.fromRGB(40, 40, 40),
+	Text = Color3.fromRGB(255, 255, 255),
+	Accent = Color3.fromRGB(0, 28, 50),
+	Close = Color3.fromRGB(255, 50, 50),
+	PlaceHoldersColor = Color3.fromRGB(100, 100, 100),
+	ElementActiveBG = Color3.fromRGB(60, 60, 60)
+})
 ALib:CreateKeySystem("", "Its working!", "Archivable Library Demo (Press 'CheckKey')", "WhiteTheme", MenuFunc)
