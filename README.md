@@ -69,7 +69,15 @@ _G.ALib:DestroyLib()
 
 ## ⚡ Начало работы
 
-### Для подгрузки библиотеки в свой скрипт поместите это в начало
+### Для читов\эксплоитов используйте это:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib/refs/heads/main/lib.lua"))()
+```
+
+### Для Roblox\Roblox Studio
+* Создайте Script (серверный) и поместите его в ServerScriptService
+* Включите Http запросы в настройках игры
+* Вставте в начало скрипта:
+```lua
+local success, result = pcall(function() return loadstring(game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com"))() end) if not success then warn("[ALib] Error: " .. result) end
 ```
