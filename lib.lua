@@ -4,7 +4,6 @@ local MarketplaceService = game:GetService("MarketplaceService")
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = game:GetService("Players").LocalPlayer
-local Mouse = LocalPlayer:GetMouse()
 local HttpService = game:GetService("HttpService")
 local RSService = game:GetService("ReplicatedStorage")
 local WorkspaceService = game:GetService("Workspace")
