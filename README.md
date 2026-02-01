@@ -67,6 +67,9 @@ _G.ALib:MakeBlurEffect(FramePath)
 -- Сделать элемент перетаскиваемым (Путь к Frame)
 _G.ALib:MakeDraggable(FramePath: string)
 
+-- Добавить свою тему ({ThemeName = string, Bg = Color3, ElementBG = Color3, Text = Color3, Accent = Color3, lose = Color3, PlaceHoldersColor = Color3, ElementActiveBG = Color3})
+_G.ALib:NewTheme({ThemeName = string, Bg = Color3, ElementBG = Color3, Text = Color3, Accent = Color3, lose = Color3, PlaceHoldersColor = Color3, ElementActiveBG = Color3})
+
 -- Полная очистка и удаление библиотеки
 _G.ALib:DestroyLib()
 ```
