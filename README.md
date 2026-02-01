@@ -79,5 +79,5 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/xoladev/ArchivableLib
 * Включите Http запросы в настройках игры
 * Вставте в начало скрипта:
 ```lua
-local success, result = pcall(function() return loadstring(game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com"))() end) if not success then warn("[ALib] Error: " .. result) end
+loadstring(game:GetService("HttpService"):GetAsync("https://raw.githubusercontent.com/xoladev/ArchivableLib/refs/heads/main/lib.lua"))()
 ```
