@@ -71,6 +71,17 @@ local ArchivableLib = {
 	MenuThemes = {},
 }
 
+type NewThemeConfig = {
+	ThemeName: string,
+	BG: Color3,
+	ElementBG: Color3,
+	Text: Color3,
+	Accent: Color3,
+	Close: Color3,
+	PlaceHoldersColor: Color3,
+	ElementActiveBG: Color3
+}
+
 local ArchivableLibGlobal = {
 	Assets = {
 		imagePlaceholder = ArchivableLib.Assets.imagePlaceholder,
@@ -97,7 +108,7 @@ local function generateRandomString(length: number): string
 	return table.concat(result)
 end
 local generatedRandomString = generateRandomString(30)
-local function printPointer(text: string, level: number)
+local function printUpdated(text: string, level: number)
 	if level == 1 then --Normal
 		TestService:Message("[" .. ArchivableLib.Assets.Root.name .. "] " .. text)
 	elseif level == 2 then --Warn
@@ -331,7 +342,7 @@ function ArchivableLibGlobal:MakeBlurEffect(FramePath)
 						end
 					end
 				end
-				
+
 				frame:GetPropertyChangedSignal("Visible"):Connect(function()
 					if frame.Visible then
 						RunService:BindToRenderStep(uid, 2000, Update)
@@ -446,7 +457,7 @@ end
 function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageContent: string, TimeDelay: number, ImageID: number)
 	ImageID = processImageID(ImageID)
 	TitleContent = #TitleContent > 23 and string.sub(TitleContent, 1, 23) or TitleContent
-	
+
 	local Notification = Instance.new("Frame")
 	Notification.Name = "Notification"
 	Notification.Parent = GUI_NotificationsHost
@@ -530,7 +541,7 @@ function ArchivableLibGlobal:CreateNotification(TitleContent: string, MessageCon
 	local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 	local tweenIn = TweenService:Create(Container, tweenInfo, {Position = UDim2.new(0, 0, 0, 0)})
 	local tweenOut = TweenService:Create(Container, tweenInfo, {Position = UDim2.new(1.5, 0, 0, 0)})
-	
+
 	Notification.Visible = true
 
 	task.spawn(function()
@@ -545,6 +556,7 @@ end
 function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: string, ThemeName: string)
 	TitleText = #TitleText > 78 and string.sub(TitleText, 1, 78) or TitleText
 	local Theme = ArchivableLib.Themes[ThemeName] or ArchivableLib.Themes.DarkTheme
+	print(Theme)
 
 	local Menu = Instance.new("Frame")
 	Menu.Name = NameInExplorer
@@ -767,7 +779,7 @@ function ArchivableLibGlobal:CreateMenu(NameInExplorer: string, TitleText: strin
 	}
 
 	ArchivableLib.MenuThemes[Menu] = Theme
-	
+
 	ArchivableLibGlobal:MakeDraggable(Menu)
 	ArchivableLibGlobal:MakeBlurEffect(Menu)
 	Menu.Visible = true
@@ -787,7 +799,7 @@ function ArchivableLibGlobal:AddTab(MenuData, TabName: string, ImageID: number)
 	TabButton.BackgroundColor3 = Theme.Text
 	TabButton.BackgroundTransparency = 1
 	TabButton.Size = UDim2.new(0.92, 0, 0.08, 0)
-	
+
 	local UIScaler = Instance.new("UIScale", TabButton)
 	UIScaler.Scale = 1.5
 
@@ -896,7 +908,7 @@ end
 
 function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageID: number, zindex: number, OnClickedButtonCallback)
 	ImageID = processImageID(ImageID)
-	
+
 	local floatingButton = Instance.new("ImageButton")
 	floatingButton.Visible = false
 	floatingButton.Name = NameInExplorer or "FloatingButton"
@@ -910,19 +922,19 @@ function ArchivableLibGlobal:CreateFloatingButton(NameInExplorer: string, ImageI
 
 	local uiCorner = Instance.new("UICorner")
 	uiCorner.Parent = floatingButton
-	
+
 	local uiaspect = Instance.new("UIAspectRatioConstraint")
 	uiaspect.Parent = floatingButton
 	uiaspect.Name = "UIAspectRatioConstraint"
 	uiaspect.DominantAxis = Enum.DominantAxis.Width
 	uiaspect.AspectType = Enum.AspectType.FitWithinMaxSize
 	uiaspect.AspectRatio = 0.999
-	
+
 	ArchivableLibGlobal:MakeDraggable(floatingButton)
-	
+
 	floatingButton.Visible = true
 	floatingButton.MouseButton1Click:Connect(function() if type(OnClickedButtonCallback) == "function" then OnClickedButtonCallback() end end)
-	
+
 	return floatingButton
 end
 
@@ -1062,11 +1074,11 @@ function ArchivableLibGlobal:CreateKeySystem(ValidKey: string, GetKeyURL: string
 			setclipboard(GetKeyURL)
 			ArchivableLibGlobal:CreateNotification("Info", "Text copied to clipboard.", 1.5, ArchivableLib.Assets.catLOLImage)
 		else
-			printPointer("Your executor does not support this function.", 2)
+			printUpdated("Your executor does not support this function.", 2)
 			ArchivableLibGlobal:CreateNotification("Error", "Your executor does not support this function.", 1.5, ArchivableLib.Assets.catLOLImage)
 		end
 	end)
-	
+
 	ArchivableLibGlobal:MakeDraggable(MainFrame)
 	ArchivableLibGlobal:MakeBlurEffect(MainFrame)
 	MainFrame.Visible = true
@@ -1078,7 +1090,7 @@ function ArchivableLibGlobal:AddTextLabel(TabData, BlockTitle: string, BlockDesc
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
-	
+
 	local TextLabelRandom = Instance.new("Frame")
 	TextLabelRandom.Name = "TextLabel_" .. generateRandomString(10)
 	TextLabelRandom.Parent = TabData.Page
@@ -1156,7 +1168,7 @@ function ArchivableLibGlobal:AddButton(TabData, BlockTitle: string, BlockDescrip
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
-	
+
 	local ButtonRandom = Instance.new("TextButton")
 	ButtonRandom.Name = "Button_" .. generateRandomString(10)
 	ButtonRandom.Parent = TabData.Page
@@ -1260,7 +1272,7 @@ function ArchivableLibGlobal:AddSlider(TabData, BlockTitle: string, BlockDescrip
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
-	
+
 	local Slider_Random = Instance.new("TextButton")
 	Slider_Random.Parent = TabData.Page
 	Slider_Random.TextWrapped = true
@@ -1324,7 +1336,7 @@ function ArchivableLibGlobal:AddSlider(TabData, BlockTitle: string, BlockDescrip
 
 	local UIPadding_2 = Instance.new("UIPadding", Description)
 	UIPadding_2.PaddingLeft = UDim.new(0, 10)
-	
+
 	local UITextSizeConstraint_2 = Instance.new("UITextSizeConstraint", Description)
 	UITextSizeConstraint_2.MaxTextSize = 25
 
@@ -1359,11 +1371,11 @@ function ArchivableLibGlobal:AddSlider(TabData, BlockTitle: string, BlockDescrip
 
 	local UIAspectRatioConstraint_7 = Instance.new("UIAspectRatioConstraint", Slider)
 	UIAspectRatioConstraint_7.AspectRatio = 2.22222
-	
+
 	local state = false
 	local bg, active, clicker = Slider, Dot, Slider_Random
 	local info = TweenInfo.new(0.2, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-	
+
 	local function toggle()
 		local posX = state and 0.688 or -0.135
 		local colBg = state and Color3.new(0.13, 1, 0) or Color3.new(1, 0.13, 0.13)
@@ -1376,9 +1388,9 @@ function ArchivableLibGlobal:AddSlider(TabData, BlockTitle: string, BlockDescrip
 
 		TweenService:Create(bg, info, {BackgroundColor3 = colBg}):Play()
 	end
-	
+
 	toggle()
-	
+
 	Slider_Random.MouseButton1Click:Connect(function()
 		state = not state
 		toggle()
@@ -1391,7 +1403,7 @@ end
 function ArchivableLibGlobal:AddSeparator(TabData, BlockText: string)
 	local Theme = TabData.MenuData.Theme
 	BlockText = #BlockText > 40 and string.sub(BlockText, 1, 40) or BlockText
-	
+
 	local Separator = Instance.new("TextLabel")
 	Separator.Name = "Separator_" .. generateRandomString(10)
 	Separator.Parent = TabData.Page
@@ -1419,7 +1431,7 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	local Theme = TabData.MenuData.Theme
 	BlockTitle = #BlockTitle > 27 and string.sub(BlockTitle, 1, 27) or BlockTitle
 	BlockDescription = #BlockDescription > 27 and string.sub(BlockDescription, 1, 27) or BlockDescription
-	
+
 	local InputValue_Random = Instance.new("Frame")
 	InputValue_Random.Name = "InputValue_" .. generateRandomString(10)
 	InputValue_Random.Parent = TabData.Page
@@ -1454,7 +1466,7 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	InputBox.Text = ""
 	InputBox.PlaceholderText = PlaceHolderText or ArchivableLib.Assets.NotSetText
 	InputBox.BackgroundTransparency = 0.8
-	
+
 	local UIAspectRatio = Instance.new("UIAspectRatioConstraint")
 	UIAspectRatio.Parent = InputBox
 	UIAspectRatio.AspectRatio = 4
@@ -1525,7 +1537,7 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	local UIAspectRatioConstraint_5 = Instance.new("UIAspectRatioConstraint")
 	UIAspectRatioConstraint_5.Parent = Description
 	UIAspectRatioConstraint_5.AspectRatio = 12.64
-	
+
 	InputBox.FocusLost:Connect(function()
 		if OnEditCompleteCallback then
 			OnEditCompleteCallback(InputBox.Text)
@@ -1533,9 +1545,26 @@ function ArchivableLibGlobal:AddInputValue(TabData, BlockTitle: string, BlockDes
 	end)
 end
 
+function ArchivableLibGlobal:NewTheme(Config: NewThemeConfig)
+	if not self.Themes then
+		self.Themes = {}
+	end
+
+	ArchivableLib.Themes[Config.ThemeName] = {
+		Bg = Config.Bg,
+		ElementBG = Config.ElementBG,
+		Text = Config.Text,
+		Accent = Config.Accent,
+		Close = Config.Close,
+		PlaceHoldersColor = Config.PlaceHoldersColor,
+		ElementActiveBG = Config.ElementActiveBG,
+	}
+
+	printUpdated("Theme added: " .. Config.ThemeName, 1)
+end
+
 ------------------------------------------------------------------------------------
 --End
 ------------------------------------------------------------------------------------
-printPointer("Loaded! - V: " .. ArchivableLib.Assets.Root.version, 1)
 ArchivableLibGlobal:CreateNotification("Hello!", "ArchivableLib Loaded!", 3, _G.ALib.Assets.dogLOLImage)
 ArchivableLibGlobal:CreateNotification("Developed:", "xolaDev", 3, _G.ALib.Assets.dogLOLImage)
